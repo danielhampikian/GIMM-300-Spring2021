@@ -12,8 +12,18 @@
 var playerHealth = 50;
 var enemyHealth = 50;
 var gameInfo = "Play By Clicking Buttons";
-var cards = [[]]; 
+var cards = [
 
+['Card name', 1, 4, '#121212', 'https://link.to.picture'], 
+['Card name', 1, 4, '#121212', 'https://link.to.picture'], 
+['Card name', 1, 4, '#121212', 'https://link.to.picture']
+
+];
+
+var middleColor = cards[1][3];
+
+
+console.log("Middle color " + middleColor);
 //display variables
 var gameInfoDisp = document.getElementById('info');
 var playerHealthDisp = document.getElementById('playerHealth');
