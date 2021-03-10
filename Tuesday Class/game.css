@@ -1,0 +1,9 @@
+.button-custom {
+    margin: 20px;
+    padding: 20px;
+}
+
+.card-container {
+    max-width: 40rem;
+    margin-bottom: 20px;
+}
