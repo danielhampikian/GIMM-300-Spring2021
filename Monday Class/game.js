@@ -9,77 +9,88 @@
 */
 
 //game logic
-var playerHealth = 50;
-var enemyHealth = 50;
-var gameInfo = "Play By Clicking Buttons";
-var cards = [
+let stateOfGame = {
+        'gameInfoDisplayMessage': '',
+        'playerHealth': 50,
+        'playerEnabled': false,
+        'enemyHealth': 50,
+        'enemyEnabled': false,
+        'cards': [
+            ['Card name', 1, 4, '#121212', 'https://link.to.picture'], 
+            ['Card name', 1, 4, '#121212', 'https://link.to.picture'], 
+            ['Card name', 1, 4, '#121212', 'https://link.to.picture']
+        ]
+    },
+    startGame = function() {
+        stateOfGame['playerEnabled'] = true;
+        stateOfGame['enemyEnabled'] = true;
 
-['Card name', 1, 4, '#121212', 'https://link.to.picture'], 
-['Card name', 1, 4, '#121212', 'https://link.to.picture'], 
-['Card name', 1, 4, '#121212', 'https://link.to.picture']
+    },
+    endGame = function() {
+        stateOfGame['playerEnabled'] = false;
+        stateOfGame['enemyEnabled'] = false;
+    },
+    isGameOver = function() {
+        return stateOfGame['playerEnabled'] === false && stateOfGame['enemyEnabled'] === false;
+    },
+    updateDisp = function() {
+        if (stateOfGame.playerHealth <= 0) {
+            stateOfGame['gameInfoDisplayMessage'] = "You Lost, try again?";
+            endGame();
+        } else if (stateOfGame.enemyHealth <= 0) {
+            stateOfGame['gameInfoDisplayMessage'] = "YOU WON BOOYAH!!!";
+            endGame();
+        }
+    },
+    updateTemplate = function() {
+        if (stateOfGame['gameInfoDisplayMessage'].trim().length > 0) {
+            document.getElementById('info').innerHTML = stateOfGame['gameInfoDisplayMessage'];
+        }
+        document.getElementById('playerHealth').innerHTML = "Player Health = " + stateOfGame['playerHealth'];
+        document.getElementById('enemyHealth').innerHTML = "Enemy Health = " + stateOfGame['enemyHealth'];
+        if (stateOfGame['playerEnabled']) {
+            playerTurnButton.removeAttribute('disabled');
+        } else {
+            playerTurnButton.setAttribute('disabled', 'disabled');
+        }
 
-];
+        if (stateOfGame['enemyEnabled']) {
+            enemyTurnButton.removeAttribute('disabled');
+        } else {
+            enemyTurnButton.setAttribute('disabled', 'disabled');
+        }
+    };
 
-var middleColor = cards[1][3];
-
-
-console.log("Middle color " + middleColor);
-//display variables
-var gameInfoDisp = document.getElementById('info');
-var playerHealthDisp = document.getElementById('playerHealth');
-var enemyHealthDisp = document.getElementById('enemyHealth');
-
-//event variables
-var playerTurnButton = document.getElementById('attackButton');
-playerTurnButton.onclick = function() {
-    playerTurn()
-};
-var enemyTurnButton = document.getElementById('enemyButton');
-enemyTurnButton.onclick = function() {
-    enemyTurn()
-};
+//Button logic
+//1. Start Button
 var startGameButton = document.getElementById('startButton');
 startGameButton.onclick = function() {
-    startGame()
+    startGame();
+    updateTemplate();
 };
 
-
-var cards = document.getElementsByClassName('card');
-//
-function playerTurn(){
-    if(!gameOver()) {
-    enemyHealth = enemyHealth - 10;
-    updateDisp();
-    gameOver();
+//2. Player Button
+var playerTurnButton = document.getElementById('attackButton');
+playerTurnButton.onclick = function() {
+    playerTurn();
+};
+function playerTurn() {
+    if (!isGameOver()) {
+        stateOfGame['enemyHealth'] = stateOfGame['enemyHealth'] - 10;
+        updateDisp();
+        updateTemplate();
     }
-}
+};
 
+//3. Enemy Button
+var enemyTurnButton = document.getElementById('enemyButton');
+enemyTurnButton.onclick = function() {
+    enemyTurn();
+};
 function enemyTurn() {
-    if(!gameOver()) {
-    playerHealth -= 10;
-    updateDisp();
-    gameOver();
+    if (!isGameOver()) {
+        stateOfGame['playerHealth'] -= 10;
+        updateDisp();
+        updateTemplate();
     }
-}
-
-function startGame() {
-    playerTurnButton.removeAttribute('disabled');
-    enemyTurnButton.removeAttribute('disabled');  
-}
-
-function updateDisp() {
-    playerHealthDisp.innerHTML = "Player Health = " + playerHealth;
-    enemyHealthDisp.innerHTML = "Enemy Health = " + enemyHealth;
-}
-
-function gameOver() {
-    if (playerHealth <= 0) {
-        gameInfoDisp.innerHTML = "You Lost, try again?"
-        return true;
-    }
-    else if (enemyHealth <= 0) {
-        gameInfoDisp.innerHTML = "YOU WON BOOYAH!!!"
-        return true;
-    }
-    return false;
-}
+};
