@@ -1,9 +1,15 @@
-.button-custom {
+.button-cont {
+    padding: 10px;
     margin: 20px;
-    padding: 20px;
-}
 
-.card-container {
-    max-width: 40rem;
-    margin-bottom: 20px;
+}
+.card-custom-container {
+    max-width: 30rem;
+    color: #00a854;
+}
+.custom-banner {
+    padding: 20px;
+    text-align: center;
+    background-color: #1519ff50;
+    margin-bottom: 40px;
 }

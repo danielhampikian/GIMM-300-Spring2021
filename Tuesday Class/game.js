@@ -9,7 +9,10 @@ TODO:
 var playerHealth = 50;
 var enemyHealth = 50;
 var damageRange = 6;
-var cards = [[5, 3, 'bob the creature', 'daniel1.jpg', '#aaa', false], [5, 3, 'bob the creature', 'daniel1.jpg', '#aaa', false]];
+var cardBankLength = 100;
+
+var playerCards = [];
+var enemyCards = [];
 
 //cards will be:
 // 0. attack - number 
@@ -18,11 +21,13 @@ var cards = [[5, 3, 'bob the creature', 'daniel1.jpg', '#aaa', false], [5, 3, 'b
 // 3. picture - string
 // 4. color - string
 // 5. inplay? - boolean 
+// [[1, 2][3, 4][5, 6]]
 
 //display
 var playerHealthDisp = document.getElementById('playerHealth');
 var enemyHealthDisp = document.getElementById('enemyHealth');
 var infoDisp = document.getElementById('info');
+
 
 //buttons and listeners 
 var playButton = document.getElementById('play');
@@ -41,6 +46,55 @@ enemyTurnButton.onclick = function(){
 function play() {
     playerTurnButton.disabled = false;
     enemyTurnButton.disabled = false;
+
+    initializeCards();
+    initializeDisplay();
+    console.log(playerCards);
+    console.log(enemyCards);
+}
+
+function initializeDisplay() {
+    var cards = document.getElementsByClassName('cards');
+    var namesDisp = document.getElementsByClassName('creature-name');
+    var attacksDisp = document.getElementsByClassName('creature-attack');
+    var defenseDisp = document.getElementsByClassName('creature-defense');
+
+    for (var i = 0; i < 6; i ++) {
+        if( i < 3) {
+        attacksDisp[i].innerHTML = playerCards[i][0];
+        defenseDisp[i].innerHTML = playerCards[i][1];
+        }
+        else {
+            attacksDisp[i].innerHTML = enemyCards[i-3][0];
+            defenseDisp[i].innerHTML = enemyCards[i-3][1];
+        }  
+    }
+
+}
+
+function initializeCards(){
+    for (var i = 0; i < cardBankLength; i ++)
+    {
+        var cardInfo = getRandomStats();
+
+        if (i % 2 == 0) {
+            playerCards.push(cardInfo);
+        }
+        else {
+            enemyCards.push(cardInfo);
+        }
+
+    }
+}
+
+function getRandomStats() {
+    var ret = [];
+
+    var attack = parseInt(Math.random() * 6 + 4);
+    var defense = parseInt(Math.random() * 8 + 8);
+    ret.push(attack);
+    ret.push(defense);
+    return ret;
 }
 
 function playerTurn() {

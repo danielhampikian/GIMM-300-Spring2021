@@ -1,8 +1,32 @@
-.button-cont {
-    padding: 10px;
+.button-custom {
     margin: 20px;
+    padding: 20px;
+}
 
+.card-container {
+    max-width: 35rem;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: rgba(160, 72, 72, 0.609);
 }
-.card-custom {
-    max-width: 40rem;
+
+.banner-custom-enemy {
+    text-align: center;
+    color: red;
+    background-color: rgba(24, 3, 98, 0.192);
+    margin-top: 20px;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
 }
+
+.banner-custom-player {
+    text-align: center;
+    color: rgb(22, 251, 240);
+    background-color: rgba(235, 37, 169, 0.192);
+    margin-top: 20px;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+}
+    
