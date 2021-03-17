@@ -54,7 +54,7 @@ function play() {
 }
 
 function initializeDisplay() {
-    var cards = document.getElementsByClassName('cards');
+    var cards = document.getElementsByClassName('card');
     var namesDisp = document.getElementsByClassName('creature-name');
     var attacksDisp = document.getElementsByClassName('creature-attack');
     var defenseDisp = document.getElementsByClassName('creature-defense');
@@ -63,10 +63,15 @@ function initializeDisplay() {
         if( i < 3) {
         attacksDisp[i].innerHTML = playerCards[i][0];
         defenseDisp[i].innerHTML = playerCards[i][1];
+        namesDisp[i].innerHTML = playerCards[i][2];
+        cards[i].style.backgroundColor = playerCards[i][3];
         }
         else {
-            attacksDisp[i].innerHTML = enemyCards[i-3][0];
-            defenseDisp[i].innerHTML = enemyCards[i-3][1];
+        attacksDisp[i].innerHTML = enemyCards[i-3][0];
+        defenseDisp[i].innerHTML = enemyCards[i-3][1];
+        namesDisp[i].innerHTML = enemyCards[i-3][2];
+        cards[i].style.backgroundColor = enemyCards[i-3][3];
+        //background-color: #456aff50;
         }  
     }
 
@@ -78,9 +83,14 @@ function initializeCards(){
         var cardInfo = getRandomStats();
 
         if (i % 2 == 0) {
+            cardInfo.push(getRandomName());
+            cardInfo.push(getRandomColor());
             playerCards.push(cardInfo);
+
         }
         else {
+            cardInfo.push(getRandomName());
+            cardInfo.push(getRandomColor());
             enemyCards.push(cardInfo);
         }
 
@@ -94,6 +104,34 @@ function getRandomStats() {
     var defense = parseInt(Math.random() * 8 + 8);
     ret.push(attack);
     ret.push(defense);
+    return ret;
+}
+
+function getRandomColor() {
+    var colors = '123456789abcdef';
+    var ret = '#';
+
+    for (var i = 0; i < 6; i++) {
+        ret += colors.charAt(parseInt(Math.random() * colors.length));
+    }
+    ret += '50';
+    return ret;
+}
+function getRandomName() {
+    var vowels = 'aeiou';
+    var consonants = 'qwrtypsdfghjklzxcvbnm';
+    var length = parseInt(Math.random() * 3 + 3);
+    var ret = '';
+
+    if (length % 2 == 0) {
+        ret += vowels.charAt(parseInt(Math.random() * vowels.length));
+    }
+    for (var i = 0; i < length; i++) {
+        ret += consonants.charAt(parseInt(Math.random() * consonants.length));
+        ret += vowels.charAt(parseInt(Math.random() * vowels.length));
+    }
+
+    vowels.charAt()
     return ret;
 }
 
