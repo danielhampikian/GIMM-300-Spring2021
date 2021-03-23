@@ -24,18 +24,20 @@ var playerHealthDisp = document.getElementById('playerHealth');
 var enemyHealthDisp = document.getElementById('enemyHealth');
 
 //event variables
-var playerTurnButton = document.getElementById('enemyTurn');
-playerTurnButton.onclick = function() {
-    playerTurn()
-};
+const playerTurnButton = document.getElementById('playerTurn');
+playerTurnButton.addEventListener('click', playerAttack);
+
 var enemyTurnButton = document.getElementById('playerTurn');
 enemyTurnButton.onclick = function() {
     enemyTurn()
 };
-var startGameButton = document.getElementById('play');
-startGameButton.onclick = function() {
-    startGame()
-};
+const upgradeButton = document.getElementById('play');
+upgradeButton.addEventListener('click', startGame);
+
+
+function playerAttack() {
+
+}
 
 
 function playerTurn(){
@@ -55,9 +57,12 @@ function setUpCardBanks() {
         cardStats.push(getRandomColor());
         // [1, 2, 'random name', 'random color']
         cardStats.push(i);
-        // [1, 2, 'random name', 'random color', 'enemy_id_3']
+        // [1, 2, 'random name', 'random color', 'enemy_id_3' 'image url']
 
-        console.log("card stats: " + cardStats);
+        //our image is in position 5
+        cardStats.push(getRandomImageURL());
+
+        //console.log("card stats: " + cardStats);
         // [3, 6, 'aoughalkh'];
         if (i < cardsBankLength/2 ) {
             playerCards.push(cardStats);
@@ -82,7 +87,7 @@ function getRandomName() {
     var vowels = 'aeiouy';
     var consonants = 'qwrtpsdfghjklzxcvbnm';
     var length = parseInt(Math.random() * 4 + 4);
-    console.log("Range for name: " + length);
+    //console.log("Range for name: " + length);
     var ret = "";
     if (length % 2 == 0) {
         ret += vowels.charAt(parseInt(Math.random() * consonants.length));
@@ -92,6 +97,9 @@ function getRandomName() {
         ret += vowels.charAt(parseInt(Math.random() * vowels.length));
     }
     return ret;
+}
+function cardBattle() {
+    
 }
 
 function getRandomColor() {
@@ -103,12 +111,13 @@ function getRandomColor() {
     return ret;
 }
 function initializeStartingCards(){
-    console.log("Calling");
+    //console.log("Calling");
     //Get a list of all the cards damage in play in the game:
     var cardsDamage = document.getElementsByClassName('card-attack');
     var cardsDefense= document.getElementsByClassName('card-defense');
     var cardsName = document.getElementsByClassName('card-name');
     var cards = document.getElementsByClassName('card');
+    var cardImage = document.getElementsByTagName('img');
     //enemy card initializiations:
     for (var i = 0; i < 6; i++) {
         //enemy cards: 
@@ -124,6 +133,7 @@ function initializeStartingCards(){
         cards[i].style.backgroundColor = enemyCards[i][3];
         
         cards[i].id = "enemy_id_" + enemyCards[i][4];
+        cardImage[i].src = enemyCards[i][5];
         }
         //player cards:
         else {
@@ -135,9 +145,19 @@ function initializeStartingCards(){
         cardsName[i].innerHTML = playerCards[i][2];
 
         cards[i].style.backgroundColor = playerCards[i][3];
+        cardImage[i].src = playerCards[i][5];
+
         }
 
     }
+}
+
+function getRandomImageURL() {
+ 
+    var ret = "https://picsum.photos/id/";
+    var imgID = parseInt(Math.random() * 100) + "/200";
+    ret += imgID;
+    return ret;
 }
 
 function enemyTurn() {
@@ -150,15 +170,21 @@ function enemyTurn() {
 
 function startGame() {
     //set up random stats for all cards:
+    console.log("Started game");
     setUpCardBanks();
 
     //set up cards in play
     initializeStartingCards();
     
-    playerTurnButton.removeAttribute('disabled');
-    enemyTurnButton.removeAttribute('disabled');  
+    playerTurnButton.disabled = false;
+    enemyTurnButton.disabled = false;  
+    upgradeButton.removeEventListener('click', startGame);
+    upgradeButton.innerHTML = 'Upgrade';
+    upgradeButton.addEventListener('click', upgrade);
+}
 
-    
+function upgrade() {
+    console.log("Upgrade");
 }
 
 
