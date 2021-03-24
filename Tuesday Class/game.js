@@ -13,14 +13,18 @@ var cardBankLength = 100;
 
 var playerCards = [];
 var enemyCards = [];
+var cards;
+var namesDisp;
+var attacksDisp;
+var defenseDisp;
 
 //cards will be:
 // 0. attack - number 
 // 1. health - number
 // 2. name = string
-// 3. picture - string
-// 4. color - string
-// 5. inplay? - boolean 
+// 3. color - string
+// 4. picture - string
+// 5. alive? - boolean 
 // [[1, 2][3, 4][5, 6]]
 
 //display
@@ -30,34 +34,45 @@ var infoDisp = document.getElementById('info');
 
 
 //buttons and listeners 
-var playButton = document.getElementById('play');
-playButton.onclick = function(){
-    play()
-};
-var playerTurnButton = document.getElementById('playerTurn');
-playerTurnButton.onclick = function(){
-    playerTurn()
-};
-var enemyTurnButton = document.getElementById('enemyTurn');
-enemyTurnButton.onclick = function(){
-    enemyTurn()
-};
+const doneButton = document.getElementById('done');
+doneButton.addEventListener('click', play);
+const upgradeButton = document.getElementById('upgrade');
+upgradeButton.addEventListener('click', upgrade);
+const attackButton = document.getElementById('attack');
+attackButton.addEventListener('click', cardBattle);
+
+function cardBattle() {
+
+}
+function upgrade(){
+
+}
 
 function play() {
-    playerTurnButton.disabled = false;
-    enemyTurnButton.disabled = false;
+    attackButton.disabled = false;
+    upgradeButton.disabled = false;
 
     initializeCards();
     initializeDisplay();
     console.log(playerCards);
     console.log(enemyCards);
+    doneButton.innerHTML = 'Done';
+    doneButton.removeEventListener('click', play);
+    doneButton.addEventListener('click', playerTurnOver)
 }
 
+function playerTurnOver() {
+console.log('player turn over');
+}
+
+
+
 function initializeDisplay() {
-    var cards = document.getElementsByClassName('card');
-    var namesDisp = document.getElementsByClassName('creature-name');
-    var attacksDisp = document.getElementsByClassName('creature-attack');
-    var defenseDisp = document.getElementsByClassName('creature-defense');
+    cards = document.getElementsByClassName('card');
+    namesDisp = document.getElementsByClassName('creature-name');
+    attacksDisp = document.getElementsByClassName('creature-attack');
+    defenseDisp = document.getElementsByClassName('creature-defense');
+    imageDisp = document.getElementsByTagName('img');
 
     for (var i = 0; i < 6; i ++) {
         if( i < 3) {
@@ -65,32 +80,40 @@ function initializeDisplay() {
         defenseDisp[i].innerHTML = playerCards[i][1];
         namesDisp[i].innerHTML = playerCards[i][2];
         cards[i].style.backgroundColor = playerCards[i][3];
+        imageDisp[i].src = playerCards[i][4];
         }
         else {
         attacksDisp[i].innerHTML = enemyCards[i-3][0];
         defenseDisp[i].innerHTML = enemyCards[i-3][1];
         namesDisp[i].innerHTML = enemyCards[i-3][2];
         cards[i].style.backgroundColor = enemyCards[i-3][3];
-        //background-color: #456aff50;
+        imageDisp[i].src = enemyCards[i-3][4];
         }  
     }
 
 }
 
+function getRandomImageURL() {
+    ret = "https://picsum.photos/id/";
+    ret += parseInt(Math.random() * 100 + 200);
+    ret += "/200";
+    return ret;
+}
+
 function initializeCards(){
     for (var i = 0; i < cardBankLength; i ++)
     {
+        //0,1
         var cardInfo = getRandomStats();
+        cardInfo.push(getRandomName());
+        cardInfo.push(getRandomColor());
+        cardInfo.push(getRandomImageURL());
+        //[[1,2,'name','color, 'url', alive?]. [1,2,'name','color, 'url', alive?]]
 
         if (i % 2 == 0) {
-            cardInfo.push(getRandomName());
-            cardInfo.push(getRandomColor());
             playerCards.push(cardInfo);
-
         }
         else {
-            cardInfo.push(getRandomName());
-            cardInfo.push(getRandomColor());
             enemyCards.push(cardInfo);
         }
 

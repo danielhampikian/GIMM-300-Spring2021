@@ -243,6 +243,7 @@ function enableAllButtons() {
 }
 function upgrade() {
     console.log("Upgrade");
+    
 }
 
 
