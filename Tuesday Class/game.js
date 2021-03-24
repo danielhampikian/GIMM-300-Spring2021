@@ -42,7 +42,51 @@ const attackButton = document.getElementById('attack');
 attackButton.addEventListener('click', cardBattle);
 
 function cardBattle() {
+    if (!gameOver()) {
 
+    
+    for (var i = 0; i<3; i++) {
+        //both cards are alive (i.e. have defense left)
+
+        if (playerCards[i][1] > 0 && enemyCards[i][1] > 0) 
+        {
+            battle(i);
+        }
+        //player card is alive, enemy card is dead = subtract from enemy health
+        if (playerCards[i][1] > 0 && enemyCards[i][1] <= 0) {
+            enemyHealth -= playerCards[i][0];
+        }
+        //enemy card is alive, player card is dead = subtract from player health
+
+        if (enemyCards[i][1] > 0 && playerCards[i][1] <= 0) {
+            playerHealth -= enemyCards[i][0];
+        }
+    }
+    initializeDisplay();
+    updateDisp();
+}
+gameOver();
+}
+
+function battle(i) {
+    console.log("before battle player card of " + i + " is: " + playerCards[i][1]);
+    console.log("before battle enemy card health of " + i + " is: " + enemyCards[i][1]);
+
+    playerCards[i][1] -= enemyCards[i][0];
+    enemyCards[i][1] -= playerCards[i][0];
+    console.log("player card health is: " + playerCards[i][1]);
+    if (playerCards[i][1]<= 0) {
+        cardDeath(playerCards, i);
+    }
+    console.log("enemy card health is: " + enemyCards[i][1]);
+
+    if (enemyCards[i][1]<= 0) {
+        cardDeath(enemyCards, i);
+    }
+}
+
+function cardDeath(cardArray, i) {
+    cardArray[i][5] = 0;
 }
 function upgrade(){
 
@@ -76,17 +120,23 @@ function initializeDisplay() {
 
     for (var i = 0; i < 6; i ++) {
         if( i < 3) {
-        attacksDisp[i].innerHTML = playerCards[i][0];
-        defenseDisp[i].innerHTML = playerCards[i][1];
+        attacksDisp[i].innerHTML = "Attack: " + playerCards[i][0];
+        defenseDisp[i].innerHTML = "Defense: " + playerCards[i][1];
         namesDisp[i].innerHTML = playerCards[i][2];
         cards[i].style.backgroundColor = playerCards[i][3];
+        if (playerCards[i][5] == 0) {
+            cards[i].style.backgroundColor = "#000";
+        }
         imageDisp[i].src = playerCards[i][4];
         }
         else {
-        attacksDisp[i].innerHTML = enemyCards[i-3][0];
-        defenseDisp[i].innerHTML = enemyCards[i-3][1];
+        attacksDisp[i].innerHTML = "Attack: " + enemyCards[i-3][0];
+        defenseDisp[i].innerHTML = "Defense: " + enemyCards[i-3][1];
         namesDisp[i].innerHTML = enemyCards[i-3][2];
         cards[i].style.backgroundColor = enemyCards[i-3][3];
+        if (enemyCards[i-3][5] == 0) {
+            cards[i].style.backgroundColor = "#000";
+        }
         imageDisp[i].src = enemyCards[i-3][4];
         }  
     }
@@ -108,7 +158,8 @@ function initializeCards(){
         cardInfo.push(getRandomName());
         cardInfo.push(getRandomColor());
         cardInfo.push(getRandomImageURL());
-        //[[1,2,'name','color, 'url', alive?]. [1,2,'name','color, 'url', alive?]]
+        cardInfo.push(1);
+        //[[1,2,'name','color, 'url', alive? - initially set to 1]. [1,2,'name','color, 'url', alive?]]
 
         if (i % 2 == 0) {
             playerCards.push(cardInfo);
@@ -159,12 +210,7 @@ function getRandomName() {
 }
 
 function playerTurn() {
-    if (!gameOver()) {
-    enemyHealth -= parseInt(Math.random() * damageRange + 4); 
-    updateDisp();
-    console.log("enemy is at: " + enemyHealth);
-    }
-    gameOver();
+
     playerTurnButton.disabled = true;
     enemyTurnButton.disabled = false;
 
