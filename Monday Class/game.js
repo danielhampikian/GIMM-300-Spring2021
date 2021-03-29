@@ -118,7 +118,7 @@ function cardBattle() {
         else if (playerCards[i][6] == 1 && enemyCards[i][6] == 0) {
             enemyHealth -= playerCards[i][0];
         }
-        //what is the third possibility?  How should we handle it?
+        
 
     }
     updateDisp();
