@@ -193,7 +193,9 @@ function initializeDisplay() {
             cards[i].style.backgroundColor = "#000";
         }
         imageDisp[i].src = playerCards[i][4];
-        }
+        cards[i].id = "playerCard" + i;
+        cards[i].addEventListener('click', selectedCard);    
+    }
         else {
         attacksDisp[i].innerHTML = "Attack: " + enemyCards[i-3][0];
         defenseDisp[i].innerHTML = "Defense: " + enemyCards[i-3][1];
@@ -207,6 +209,16 @@ function initializeDisplay() {
     }
 
 }
+function selectedCard(e) {
+    console.log(this);
+        var idx = parseInt(this.id.slice(-1));
+        console.log(idx);
+        console.log(this.id.charAt(0));
+            if(this.id.charAt(0) == "p") {
+            console.log("player card name is: " + playerCards[idx][2]);
+            }
+}
+
 
 function getRandomImageURL() {
     ret = "https://picsum.photos/id/";
