@@ -1,8 +1,7 @@
 /*
 TODO: 
-1. variables for enemy/player health, damage, cards
-2. functions for detecting either score is 0 or less, subtracting with button press
-3. scores go down, see game win/lose message
+1. change the visual display of clicked on card
+2. change the data itself of clicked on card and make it display that change
 */
 
 //game logic
