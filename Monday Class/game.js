@@ -37,7 +37,7 @@ const doneButton = document.getElementById('done');
 doneButton.addEventListener('click', done);
 
 const upgradeButton = document.getElementById('play');
-upgradeButton.addEventListener('click', startGame);
+upgradeButton.addEventListener('click', upgrade);
 
 
 function playerAttack() {
@@ -296,7 +296,10 @@ function upgrade() {
     console.log("Upgrade");
     if (turnName == "player") {
         for (i = 0; i < 3; i++) {
+            console.log(playerCards[i][2]);
+
             playerCards[i][1] += 2;
+            console.log(playerCards[i][2]);
         }
     }
     if (turnName == "enemy") {

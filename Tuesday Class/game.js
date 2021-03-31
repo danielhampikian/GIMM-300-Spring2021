@@ -31,6 +31,7 @@ var defenseDisp;
 var playerHealthDisp = document.getElementById('playerHealth');
 var enemyHealthDisp = document.getElementById('enemyHealth');
 var infoDisp = document.getElementById('info');
+var enemyPlayer = "player";
 
 
 //buttons and listeners 
@@ -39,8 +40,19 @@ doneButton.addEventListener('click', play);
 const upgradeButton = document.getElementById('upgrade');
 upgradeButton.addEventListener('click', upgrade);
 const attackButton = document.getElementById('attack');
-attackButton.addEventListener('click', cardBattle);
+attackButton.addEventListener('click', playerAttack);
 
+
+function playerAttack() {
+    cardBattle();
+    disableAllButDoneButtons();
+}
+
+function enableAllButDoneButtons(){
+    attackButton.disabled = false;
+    upgradeButton.disabled = false;
+    doneButton.dispatchEvent = true;
+}
 function cardBattle() {
     if (!gameOver()) {
 
@@ -89,7 +101,20 @@ function cardDeath(cardArray, i) {
     cardArray[i][5] = 0;
 }
 function upgrade(){
+    if(enemyPlayer == "player") {
+    console.log("Upgrading player");
+    for (i =0; i < 3; i++) {
+        playerCards[i][1] += parseInt(Math.random() * 4);
+    }
+}
+else {
+    for (i = 0; i < 3; i++)  {
+    enemyCards[i][1] += parseInt(Math.random() * 4);
+    }
 
+}
+    initializeDisplay();
+    disableAllButDoneButtons();
 }
 
 function play() {
@@ -102,11 +127,51 @@ function play() {
     console.log(enemyCards);
     doneButton.innerHTML = 'Done';
     doneButton.removeEventListener('click', play);
-    doneButton.addEventListener('click', playerTurnOver)
+    doneButton.addEventListener('click', enemyTurn)
+}
+var enemyChoiceInterval;
+var enemyChoiceInfo;
+
+function enemyTurn() {
+    if(!gameOver()) {
+        enemyPlayer = "e";
+    enemyChoiceInterval = setInterval(enemyChoiceDisplay, 1000);
+    setTimeout(playerTurn, 3000);
+    var numChoice = Math.random() * 100;
+    infoDisp.innerHTML = "Enemy is thinking about the number: " + numChoice;
+
+    if (numChoice < 70) {
+        upgrade();
+        enemyChoiceInfo = "Upgraded!";
+    }
+    else {
+        cardBattle();
+       enemyChoiceInfo = "Attacked!"
+    }
+
+    }
+    gameOver();
+}
+var highlightChoice;
+function enemyChoiceDisplay(){
+    console.log("Called");
+    highlightChoice = parseInt(Math.random() * 3 + 3);
+    cards[highlightChoice].style.backgroundColor = cards[highlightChoice].style.backgroundColor == "red" ? enemyCards[i][3] : "red";
 }
 
-function playerTurnOver() {
-console.log('player turn over');
+
+function playerTurn() {
+    clearInterval(enemyChoiceInterval);
+    enemyPlayer = "player";
+    infoDisp.innerHTML = "Enemy " + enemyChoiceInfo;
+    enableAllButDoneButtons();
+    initializeDisplay();
+}
+
+function disableAllButDoneButtons(){
+    attackButton.disabled = true;
+    upgradeButton.disabled = true;
+    doneButton.disabled = false;
 }
 
 
@@ -207,24 +272,6 @@ function getRandomName() {
 
     vowels.charAt()
     return ret;
-}
-
-function playerTurn() {
-
-    playerTurnButton.disabled = true;
-    enemyTurnButton.disabled = false;
-
-}
-
-function enemyTurn() {
-    if(!gameOver()) {
-    playerHealth -= parseInt(Math.random() * damageRange + 4);
-    updateDisp();
-    console.log("player is at" + playerHealth);
-    }
-    gameOver();
-    enemyTurnButton.disabled = true;
-    playerTurnButton.disabled = false;
 }
 
 function updateDisp() {
