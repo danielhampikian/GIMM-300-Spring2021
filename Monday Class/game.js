@@ -1,11 +1,9 @@
 /* TODO:
-1. variables for player health/enemy health
-2. variables for cards, and card stats
-3. display variables that allow us to change the page
-4. add on click listeners to buttons
-    a. have only play game working at first
-    b. have attack and enemy turn buttons working
-5. game logic
+1. Make the player choose either upgrade or attack like the enemy has to
+2. Do something with the code and the appearance i.e. 
+   change the data and the visual appearance, of a clicked on card
+    a. visual appearance accesed by cards[index].style or cards[index].classList
+    b. actual data accessed by playerCards[index][attributeIndex] or enemyCards[index][attributeIndex]
 */
 
 //game logic
@@ -21,7 +19,9 @@ var cardsDefense;
 var cardsName;
 var cards;
 var cardImage;
-
+var aiInterval;
+var turnName;
+var initialized = false;
 
 
 //display variables
@@ -37,7 +37,7 @@ const doneButton = document.getElementById('done');
 doneButton.addEventListener('click', done);
 
 const upgradeButton = document.getElementById('play');
-upgradeButton.addEventListener('click', startGame);
+upgradeButton.addEventListener('click', upgrade);
 
 
 function playerAttack() {
@@ -51,7 +51,7 @@ function playerAttack() {
 
 function playerTurn(){
     if(!gameOver()) {
-    
+    turnName = "player";
     gameOver();
     }
 }
@@ -166,6 +166,7 @@ function getRandomColor() {
     }
     return ret;
 }
+
 function initializeCards(){
     //console.log("Calling");
     //Get a list of all the cards damage in play in the game:
@@ -173,6 +174,7 @@ function initializeCards(){
     cardsDefense= document.getElementsByClassName('card-defense');
     cardsName = document.getElementsByClassName('card-name');
     cards = document.getElementsByClassName('card');
+    
     cardImage = document.getElementsByTagName('img');
     //enemy card initializiations:
     for (var i = 0; i < 6; i++) {
@@ -188,11 +190,12 @@ function initializeCards(){
 
         cards[i].style.backgroundColor = enemyCards[i][3];
         
-        cards[i].id = "player_id_" + enemyCards[i][4];
+        cards[i].id = "enemyCard" + i;
         cardImage[i].src = enemyCards[i][5];
         }
         //player cards:
         else {
+
         //set the attack of the enemy card damage by accessing the list at i
         cardsDamage[i].innerHTML = "Attack: " + playerCards[i-3][0];
         //set the defense
@@ -202,10 +205,21 @@ function initializeCards(){
 
         cards[i].style.backgroundColor = playerCards[i-3][3];
         cardImage[i].src = playerCards[i-3][5];
-
+        cards[i].id = ("playerCard" + (i-3));
+        console.log(cards[i]);
+        if (!initialized) {
+            cards[i].addEventListener('click', selected);
+            }
         }
 
     }
+}
+function selected(e) {
+    console.log(this);
+    console.log(this.id);
+    var idx = parseInt(this.id.slice(-1));
+    console.log(idx);
+    console.log(playerCards[idx]);
 }
 
 function getRandomImageURL() {
@@ -218,9 +232,32 @@ function getRandomImageURL() {
 
 function enemyTurn() {
     if(!gameOver()) {
+        turnName = "enemy";
         //enemy Turn code here:
+        disableAllButtons();
+        console.log("enemy went");
+        aiInterval = setInterval(thinkingAIDisplay, 1000);
+        setTimeout(stopEnemyTurn, 3100);
     gameOver();
     }
+}
+
+function stopEnemyTurn() {
+    clearInterval(aiInterval);
+    if (enemyChoiceNumber < 70) {
+        upgrade();
+        gameInfoDisp.innerHTML = "Enemy decided to ugrade";
+    }
+    else {
+        cardBattle();
+        gameInfoDisp.innerHTML = "Enemy decided to battle";
+    }
+    enableAllButtons();
+}
+var enemyChoiceNumber;
+function thinkingAIDisplay() {
+    enemyChoiceNumber = Math.random() * 100;
+    gameInfoDisp.innerHTML = "Enemy is thinking deeply about the meaning of: " + enemyChoiceNumber;
 }
 
 function startGame() {
@@ -239,12 +276,45 @@ function startGame() {
 function enableAllButtons() {
     playerTurnButton.disabled = false;
     doneButton.disabled = false;  
-    upgrade.disabled = false;
+    upgradeButton.disabled = false;
 }
+function disableAllButtonsButDone() {
+
+    playerTurnButton.disabled = true;
+    doneButton.disabled = false;  
+    upgradeButton.disabled = true;
+}
+function disableAllButtons() {
+
+    playerTurnButton.disabled = true;
+    doneButton.disabled = true;  
+    upgradeButton.disabled = true;
+}
+
+
 function upgrade() {
     console.log("Upgrade");
-    
+    if (turnName == "player") {
+        for (i = 0; i < 3; i++) {
+            console.log(playerCards[i][2]);
+
+            playerCards[i][1] += 2;
+            console.log(playerCards[i][2]);
+        }
+    }
+    if (turnName == "enemy") {
+        for (i = 0; i < 3; i++) {
+            enemyCards[i][1] += 2;
+        }
+    }
+
 }
+
+function done() {
+    enemyTurn();
+}
+    
+
 
 
 

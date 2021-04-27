@@ -1,8 +1,7 @@
 /*
 TODO: 
-1. variables for enemy/player health, damage, cards
-2. functions for detecting either score is 0 or less, subtracting with button press
-3. scores go down, see game win/lose message
+1. change the visual display of clicked on card
+2. change the data itself of clicked on card and make it display that change
 */
 
 //game logic
@@ -31,6 +30,7 @@ var defenseDisp;
 var playerHealthDisp = document.getElementById('playerHealth');
 var enemyHealthDisp = document.getElementById('enemyHealth');
 var infoDisp = document.getElementById('info');
+var enemyPlayer = "player";
 
 
 //buttons and listeners 
@@ -39,8 +39,19 @@ doneButton.addEventListener('click', play);
 const upgradeButton = document.getElementById('upgrade');
 upgradeButton.addEventListener('click', upgrade);
 const attackButton = document.getElementById('attack');
-attackButton.addEventListener('click', cardBattle);
+attackButton.addEventListener('click', playerAttack);
 
+
+function playerAttack() {
+    cardBattle();
+    disableAllButDoneButtons();
+}
+
+function enableAllButDoneButtons(){
+    attackButton.disabled = false;
+    upgradeButton.disabled = false;
+    doneButton.dispatchEvent = true;
+}
 function cardBattle() {
     if (!gameOver()) {
 
@@ -89,7 +100,20 @@ function cardDeath(cardArray, i) {
     cardArray[i][5] = 0;
 }
 function upgrade(){
+    if(enemyPlayer == "player") {
+    console.log("Upgrading player");
+    for (i =0; i < 3; i++) {
+        playerCards[i][1] += parseInt(Math.random() * 4);
+    }
+}
+else {
+    for (i = 0; i < 3; i++)  {
+    enemyCards[i][1] += parseInt(Math.random() * 4);
+    }
 
+}
+    initializeDisplay();
+    disableAllButDoneButtons();
 }
 
 function play() {
@@ -102,11 +126,51 @@ function play() {
     console.log(enemyCards);
     doneButton.innerHTML = 'Done';
     doneButton.removeEventListener('click', play);
-    doneButton.addEventListener('click', playerTurnOver)
+    doneButton.addEventListener('click', enemyTurn)
+}
+var enemyChoiceInterval;
+var enemyChoiceInfo;
+
+function enemyTurn() {
+    if(!gameOver()) {
+        enemyPlayer = "e";
+    enemyChoiceInterval = setInterval(enemyChoiceDisplay, 1000);
+    setTimeout(playerTurn, 3000);
+    var numChoice = Math.random() * 100;
+    infoDisp.innerHTML = "Enemy is thinking about the number: " + numChoice;
+
+    if (numChoice < 70) {
+        upgrade();
+        enemyChoiceInfo = "Upgraded!";
+    }
+    else {
+        cardBattle();
+       enemyChoiceInfo = "Attacked!"
+    }
+
+    }
+    gameOver();
+}
+var highlightChoice;
+function enemyChoiceDisplay(){
+    console.log("Called");
+    highlightChoice = parseInt(Math.random() * 3 + 3);
+    cards[highlightChoice].style.backgroundColor = cards[highlightChoice].style.backgroundColor == "red" ? enemyCards[i][3] : "red";
 }
 
-function playerTurnOver() {
-console.log('player turn over');
+
+function playerTurn() {
+    clearInterval(enemyChoiceInterval);
+    enemyPlayer = "player";
+    infoDisp.innerHTML = "Enemy " + enemyChoiceInfo;
+    enableAllButDoneButtons();
+    initializeDisplay();
+}
+
+function disableAllButDoneButtons(){
+    attackButton.disabled = true;
+    upgradeButton.disabled = true;
+    doneButton.disabled = false;
 }
 
 
@@ -128,7 +192,9 @@ function initializeDisplay() {
             cards[i].style.backgroundColor = "#000";
         }
         imageDisp[i].src = playerCards[i][4];
-        }
+        cards[i].id = "playerCard" + i;
+        cards[i].addEventListener('click', selectedCard);    
+    }
         else {
         attacksDisp[i].innerHTML = "Attack: " + enemyCards[i-3][0];
         defenseDisp[i].innerHTML = "Defense: " + enemyCards[i-3][1];
@@ -142,6 +208,16 @@ function initializeDisplay() {
     }
 
 }
+function selectedCard(e) {
+    console.log(this);
+        var idx = parseInt(this.id.slice(-1));
+        console.log(idx);
+        console.log(this.id.charAt(0));
+            if(this.id.charAt(0) == "p") {
+            console.log("player card name is: " + playerCards[idx][2]);
+            }
+}
+
 
 function getRandomImageURL() {
     ret = "https://picsum.photos/id/";
@@ -207,24 +283,6 @@ function getRandomName() {
 
     vowels.charAt()
     return ret;
-}
-
-function playerTurn() {
-
-    playerTurnButton.disabled = true;
-    enemyTurnButton.disabled = false;
-
-}
-
-function enemyTurn() {
-    if(!gameOver()) {
-    playerHealth -= parseInt(Math.random() * damageRange + 4);
-    updateDisp();
-    console.log("player is at" + playerHealth);
-    }
-    gameOver();
-    enemyTurnButton.disabled = true;
-    playerTurnButton.disabled = false;
 }
 
 function updateDisp() {
